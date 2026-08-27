@@ -31,21 +31,21 @@ const getUser = () => localStorage.getItem("loggedInUser");
 const setUser = name => localStorage.setItem("loggedInUser", name);
 const clearUser = () => {
     localStorage.removeItem("loggedInUser");
-    location.replace("/login/index.html");
+    location.replace("/login/");
 };
 
 // Проверка перенаправления
 const loginPage = () =>
     location.pathname === "/" ||
-    location.pathname.endsWith("/login/index.html");
+    location.pathname.endsWith("/login/");
 
 const currentUser = getUser();
 const user = users.find(u => u.Логин === currentUser);
 
 if (loginPage() && currentUser) {
-    location.href = "/abonements/index.html";
+    location.href = "/abonements/";
 } else if (!loginPage() && !currentUser) {
-    location.replace("/login/index.html");
+    location.replace("/login/");
 }
 
 // Проверка входа
@@ -58,7 +58,7 @@ if (loginPage()) {
         const user = users.find(u => u.Логин === login && u.Пароль === password);
         if (user) {
             setUser(user.Логин);
-            location.href = "/abonements/index.html";
+            location.href = "/abonements/";
         } else {
             document.querySelector(".error").classList.add("show");
         }
