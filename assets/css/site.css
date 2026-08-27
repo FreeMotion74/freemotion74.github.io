@@ -1,0 +1,155 @@
+.header {
+    justify-content: space-between;
+    width: 70%;
+}
+
+.navigate a {
+    color: var(--light);
+    font-size: var(--text15);
+    margin: 0px 15px;
+}
+
+.navigate .active {
+    font-size: var(--text18);
+    border-bottom: 4px solid var(--light);
+    border-radius: 10px;
+}
+
+@media (hover: hover) {
+    .navigate a:hover {
+        border-bottom: 4px solid var(--light);
+        border-radius: 10px;
+    }
+}
+
+.head p:first-of-type {
+    color: var(--purple-light);
+    font-size: var(--text26);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.head p:last-of-type {
+    color: var(--purple-light);
+    font-size: var(--text22);
+    text-align: center;
+}
+
+main {
+    padding: 70px 30px;
+    gap: 70px;
+    width: 70%;
+    margin: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+header .header-mobile {
+    display: none;
+    margin: auto;
+    align-items: center;
+    padding: 10px 0;
+}
+
+header .mobile-logo img {
+    height: 110px;
+}
+
+header .mobile-brand {
+    margin-left: 30px;
+}
+
+header .mobile-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+header .mobile-title {
+    font-weight: 700;
+    font-size: var(--text26);
+    white-space: nowrap;
+    color: var(--light);
+}
+
+header .mobile-subtitle {
+    font-size: var(--text15);
+    color: var(--light);
+}
+
+header .mobile-navigate {
+    padding-top: 5px;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+header .mobile-navigate a {
+    border-radius: 100%;
+    background: var(--light);
+    transition: background 0.3s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+}
+
+header .mobile-navigate a img {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+header .header-mobile .mobile-navigate a.active {
+    background: var(--purple-light);
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
+}
+
+
+@media (max-width: 768px) {
+
+
+    main {
+        width: 100%;
+        gap: 30px;
+        padding: 30px;
+    }
+
+    header .header {
+        display: none;
+    }
+
+    header .header-mobile {
+        display: flex;
+        justify-content: center;
+    }
+
+    header .active {
+        border-bottom: 0px solid var(--light);
+        border-radius: 0px;
+    }
+
+    .head p:first-of-type {
+        font-size: var(--text22);
+    }
+
+    .head p:last-of-type {
+        font-size: var(--text18);
+    }
+
+
+
+
+
+}
