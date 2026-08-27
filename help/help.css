@@ -1,0 +1,131 @@
+main>img {
+    border-radius: var(--radius-big);
+}
+
+hr {
+    border-top: 3px solid var(--purple-light);
+    border-radius: 100%;
+}
+
+.help-title {
+    padding: 20px 0;
+    color: var(--purple-dark);
+    font-size: 26px;
+    border-bottom: 1px solid var(--purple-light);
+    text-align: center;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+@media (hover: hover) {
+
+    .help-title:hover,
+    .help-title:hover::after {
+        color: var(--purple-light);
+    }
+}
+
+.help-title.active {
+    color: var(--purple-light);
+}
+
+.help-text {
+    transform: scaleY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+    max-height: 0;
+    border-bottom: 2px solid var(--purple-light);
+    border-radius: var(--radius-small);
+}
+
+.help-text.active {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    max-height: 100%;
+    transform: scaleY(1);
+    gap: 20px;
+}
+
+
+.help-text>p {
+    color: var(--purple-dark);
+    text-align: center;
+    font-size: 22px;
+}
+
+.help-text b {
+    color: var(--purple-light);
+}
+
+@media (hover: hover) {
+    .help-text a:hover {
+        color: var(--purple-light);
+        text-decoration: underline;
+    }
+}
+
+.help-price {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.price {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.price img {
+    height: 140px;
+    border-radius: 100%;
+}
+
+.price-title p {
+    color: var(--purple-light);
+    font-size: 18px;
+    font-style: italic;
+    text-align: center;
+}
+
+.price-title p:last-of-type {
+    font-weight: 700;
+}
+
+
+
+
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    main>img {
+        border-radius: var(--radius-small);
+    }
+
+    .help-title {
+        font-size: 22px;
+    }
+
+    .help-text.active {
+        padding: 10px 0;
+    }
+
+
+    .help-text>p {
+        font-size: 18px;
+    }
+
+    .help-price {
+        flex-wrap: nowrap;
+    }
+
+    .price img {
+        height: 60px;
+    }
+
+    .price-title p {
+        font-size: 13px;
+    }
+}
