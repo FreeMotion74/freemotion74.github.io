@@ -1,0 +1,121 @@
+.map {
+    position: relative;
+    height: 700px;
+    border-radius: var(--radius-big);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.map-contacts {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: var(--light);
+    padding: 30px;
+    border-radius: var(--radius-big);
+    width: 460px;
+    box-shadow: var(--shadow);
+    max-height: 700px;
+}
+
+.contact-director {
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+}
+
+.contact-director img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    object-fit: cover;
+    border: 4px solid var(--purple-light);
+    cursor: pointer;
+    transition: all 250ms ease;
+}
+
+@media (hover: hover) {
+    .contact-director img:hover {
+        transform: scale(1.2);
+    }
+}
+
+.contact-header {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--purple-light);
+    text-align: center;
+}
+
+.contact-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 15px;
+    color: var(--purple-dark);
+}
+
+.contact-text {
+    font-size: 16px;
+    margin-top: 5px;
+    color: var(--purple-dark);
+}
+
+.contact-text a {
+    color: var(--purple-light);
+    font-weight: 700;
+}
+
+@media (hover: hover) {
+    .contact-text a:hover {
+        text-decoration: underline;
+    }
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    .map {
+        height: 500px;
+        border-radius: 0;
+        box-shadow: none;
+        position: static;
+        display: flex;
+        flex-direction: column;
+        height: 900px;
+        display: flex;
+        gap: 20px;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .map-contacts {
+        padding: 0px;
+        border-radius: 0;
+        width: auto;
+        box-shadow: none;
+        position: static;
+    }
+
+    .contact-header {
+        font-size: 18px;
+    }
+
+    .contact-title {
+        font-size: 16px;
+    }
+
+    .contact-text {
+        font-size: 13px;
+    }
+}
