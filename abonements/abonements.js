@@ -111,11 +111,11 @@ document.addEventListener("input", e => {
 });
 
 // Клик повсей ячейки дат
-document.addEventListener("click", (e) => {
+document.addEventListener("click", e => {
     const input = e.target.closest('input[type="date"]');
-    if (input && typeof input.showPicker === "function") {
-        input.showPicker();
-    }
+    if (!input) return;
+    if (window.matchMedia("(hover: none)").matches) return;
+    input.showPicker?.();
 });
 
 // Установка времени
@@ -372,6 +372,12 @@ function createItem(card, idItem, item = {}) {
 
     tableSum.before(tableItem);
 
+    tableItem.querySelectorAll('input[type="date"]').forEach(input => {
+        const val = input.value;
+        input.value = val;
+        input.defaultValue = "";
+    });
+
     return tableItem;
 }
 
@@ -604,11 +610,18 @@ document.addEventListener("focusout", e => {
 
 // Сохранение ученика при выборе даты
 document.addEventListener('change', e => {
-    if (!e.target.type === 'date') return;
+    if (e.target.type !== 'date') return;
+
+    e.target.defaultValue = "";
+
     const row = e.target.closest('.table-item');
     saveRow(row, user);
     colorDate();
-    e.target.blur();
+
+    const isTouch = window.matchMedia("(hover: none)").matches || "ontouchstart" in window;
+    if (!isTouch) {
+        e.target.blur();
+    }
 });
 
 // Сохранение ученика при изменении цифр
