@@ -105,8 +105,10 @@ body {
     background: #9526c030;
 }
 
-.today-col.open:hover {
-    background: #f2f0fa;
+@media (hover: hover) {
+    .today-col.open:hover {
+        background: #f2f0fa;
+    }
 }
 
 #popup {
