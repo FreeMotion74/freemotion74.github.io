@@ -37,8 +37,9 @@ const weekName = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 // Где создается таблица
 const cardTables = document.querySelectorAll(".card-table");
 
-// Генерация 30 дней
+// Генерация 30 дней (начиная со вчера)
 const today = new Date();
+today.setDate(today.getDate() - 1);
 
 const days = Array.from({ length: 30 }, (_, i) => {
     const newDate = new Date(today);
@@ -51,6 +52,17 @@ const days = Array.from({ length: 30 }, (_, i) => {
         weekDay: weekName[newDate.getDay()],
     };
 });
+
+// Проверка сегодня
+const isToday = (d) => {
+    const now = new Date();
+
+    return (
+        d.date.getDate() === now.getDate() &&
+        d.date.getMonth() === now.getMonth() &&
+        d.date.getFullYear() === now.getFullYear()
+    );
+};
 
 // Деление на нужные недели
 const weeks = [];
@@ -86,7 +98,7 @@ cardTables.forEach((cardTable, hall) => {
     days.forEach((d) => {
         const div = document.createElement("div");
 
-        div.className = "table-title days";
+        div.className = "table-title days" + (isToday(d) ? " today-col" : "");
         div.innerHTML = `
             <div>${d.weekDay}</div>
             <div style="font-size:13px">${d.dateDay}</div>
@@ -108,7 +120,7 @@ cardTables.forEach((cardTable, hall) => {
         days.forEach((d) => {
             const div = document.createElement("div");
 
-            div.className = "open";
+            div.className = "open" + (isToday(d) ? " today-col" : "");
 
             div.dataset.day = d.dateDay;
             div.dataset.time = t;

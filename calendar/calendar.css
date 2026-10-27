@@ -97,6 +97,18 @@ body {
     background-color: var(--glass);
 }
 
+.today-col.days {
+    background: #9526c030;
+}
+
+.today-col.open {
+    background: #9526c030;
+}
+
+.today-col.open:hover {
+    background: #f2f0fa;
+}
+
 #popup {
     display: none;
     z-index: 9999;
@@ -154,6 +166,7 @@ body {
         opacity: 1;
     }
 }
+
 
 
 
