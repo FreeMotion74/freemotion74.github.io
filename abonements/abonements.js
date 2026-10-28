@@ -124,61 +124,16 @@ if (today) {
     today.textContent = new Date().toLocaleDateString("ru-RU", { dateStyle: "long" });
 }
 
-// Перемещение блока итогов
-function motionRight() {
-    const main = document.querySelector("main");
-    const mainRight = document.querySelector(".main-right");
-    if (!main || !mainRight) return;
-
-    const offset = 30;
-    const scrollPercentThreshold = 0.99;
-
-    let targetTop = 0;
-    let currentTop = 0;
-
-    function updateTarget() {
-        const rightHeight = mainRight.offsetHeight;
-        const windowHeight = window.innerHeight;
-        const parentRect = main.getBoundingClientRect();
-
-        const scrollY = window.scrollY || window.pageYOffset;
-        const pageHeight = document.documentElement.scrollHeight - windowHeight;
-
-        const scrollThreshold = pageHeight * scrollPercentThreshold;
-
-        if (scrollY < scrollThreshold) {
-            targetTop = offset;
-            return;
-        }
-
-        if (parentRect.bottom - rightHeight - offset < 0) {
-            targetTop = main.offsetHeight - rightHeight;
-        } else {
-            targetTop = -parentRect.top + offset;
-
-            if (targetTop < 0) targetTop = 0;
-
-            const maxTop = windowHeight - rightHeight - offset;
-            if (targetTop > maxTop) targetTop = maxTop;
-        }
-    }
-
-    function animate() {
-        const diff = targetTop - currentTop;
-        currentTop += diff * 0.05;
-
-        mainRight.style.top = currentTop + "px";
-
-        requestAnimationFrame(animate);
-    }
-
-    window.addEventListener("scroll", updateTarget);
-    window.addEventListener("resize", updateTarget);
-
-    updateTarget();
-    animate();
+// Высота шапки для отступа sticky-блока
+const header = document.querySelector("header");
+function updateHeaderH() {
+    document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
 }
-motionRight();
+updateHeaderH();
+window.addEventListener("resize", updateHeaderH);
+
+
+
 
 // Настройка цветов для дат
 function colorDate() {
@@ -358,7 +313,7 @@ function createItem(card, idItem, item = {}) {
 
     tableItem.innerHTML = `
         <div class="number">${idItem}</div>
-        <div class="fio" contenteditable="true" data-placeholder="Введите имя">${item.fio || ''}</div>
+        <div class="fio" data-placeholder="Введите имя">${item.fio || ''}</div>
         <div class="date1"><input type="date" required value="${item.date1 || ''}"></div>
         <div class="number1"><input type="number" inputmode="numeric" required placeholder="" value="${item.number1 ?? ''}"></div>
         <div class="number2"><input type="number" inputmode="numeric" required placeholder="" value="${item.number2 ?? ''}"></div>
@@ -367,7 +322,14 @@ function createItem(card, idItem, item = {}) {
         <div class="number4"><input type="number" inputmode="numeric" required placeholder="" value="${item.number4 ?? ''}"></div>
         <div class="date3"><input type="date" required value="${item.date3 || ''}"></div>
         <div class="number5"><input type="number" inputmode="numeric" required placeholder="" value="${item.number5 ?? ''}"></div>
-        <button class="button del-stu">✖</button>
+        <div>
+            <button class="button edit-stu">
+                <img src="/assets/icons/abonements/edit.png">
+            </button>
+            <button class="button del-stu">
+                <img src="/assets/icons/abonements/del.png">
+            </button>
+        </div>
     `;
 
     tableSum.before(tableItem);
@@ -405,10 +367,17 @@ function createCard(idCard, idItem) {
 
     card.innerHTML = `
             <div class="card-header">
-                <div class="card-title" contenteditable="true" data-placeholder="Введите название"></div>
+                <div class="card-title" data-placeholder="Введите название"></div>
                 <div>
-                    <button class="button add-stu">＋<span class="text">Добавить ученика</span></button>
-                    <button class="button del-gro">✖</button>
+                    <button class="button add-stu">
+                        <img src="/assets/icons/abonements/add.png">
+                    </button>
+                    <button class="button edit-title">
+                        <img src="/assets/icons/abonements/edit.png">
+                    </button>
+                    <button class="button del-gro">
+                        <img src="/assets/icons/abonements/del.png">
+                    </button>
                 </div>
             </div>
             <div class="card-scroll">
@@ -448,7 +417,8 @@ function createCard(idCard, idItem) {
 
 // Нажатие на кнопку создание группы
 document.addEventListener("click", e => {
-    if (!e.target.classList.contains("add-gro")) return;
+    const btn = e.target.closest(".add-gro");
+    if (!btn) return;
 
     const mainLeft = document.querySelector(".main-left");
     const idCard = mainLeft.querySelectorAll(".card").length + 1;
@@ -463,9 +433,10 @@ document.addEventListener("click", e => {
 
 // Удаление ученика и обновление порядка номеров
 document.addEventListener("click", async (e) => {
-    if (!e.target.classList.contains("del-stu")) return;
+    const btn = e.target.closest(".del-stu");
+    if (!btn) return;
 
-    const row = e.target.closest(".table-item");
+    const row = btn.closest(".table-item");
     const fio = row.querySelector(".fio").textContent.trim() || "без имени";
     const card = row.closest(".card");
 
@@ -488,9 +459,10 @@ document.addEventListener("click", async (e) => {
 
 // Удаление группы
 document.addEventListener("click", async (e) => {
-    if (!e.target.classList.contains("del-gro")) return;
+    const btn = e.target.closest(".del-gro");
+    if (!btn) return;
 
-    const card = e.target.closest(".card");
+    const card = btn.closest(".card");
     const cardTitle = card.querySelector(".card-title").textContent.trim() || "без названия";
 
     const mainLeft = document.querySelector(".main-left");
@@ -517,6 +489,79 @@ document.addEventListener("click", async (e) => {
         }
     }
 });
+
+// Изменение названия группы через иконку
+document.addEventListener("click", async e => {
+    const btn = e.target.closest(".edit-title");
+    if (!btn) return;
+
+    const card = btn.closest(".card");
+    const titleEl = card.querySelector(".card-title");
+    const oldTitle = titleEl.textContent.trim();
+
+    const promise = Modal(
+        "Изменить название группы",
+        `<input id="modal-input" class="modal-input" value="${oldTitle.replace(/"/g, "&quot;")}" maxlength="40">`,
+        "Сохранить",
+        "Отмена"
+    );
+
+    const input = document.getElementById("modal-input");
+    let value = oldTitle;
+
+    if (input) {
+    input.focus();
+    const end = input.value.length;
+    input.setSelectionRange(end, end);
+    input.addEventListener("input", () => value = input.value);
+    input.addEventListener("keydown", ev => {
+        if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
+    });
+}
+
+
+    if (await promise) {
+        titleEl.textContent = value.trim();
+        saveCard(card, user);
+    }
+});
+
+// Изменение имени ученика через иконку
+document.addEventListener("click", async e => {
+    const btn = e.target.closest(".edit-stu");
+    if (!btn) return;
+
+    const row = btn.closest(".table-item");
+    const fioEl = row.querySelector(".fio");
+    const oldFio = fioEl.textContent.trim();
+
+    const promise = Modal(
+        "Изменить имя ученика",
+        `<input id="modal-input" class="modal-input" value="${oldFio.replace(/"/g, "&quot;")}" maxlength="40">`,
+        "Сохранить",
+        "Отмена"
+    );
+
+    const input = document.getElementById("modal-input");
+    let value = oldFio;
+
+    if (input) {
+    input.focus();
+    const end = input.value.length;
+    input.setSelectionRange(end, end);
+    input.addEventListener("input", () => value = input.value);
+    input.addEventListener("keydown", ev => {
+        if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
+    });
+}
+
+
+    if (await promise) {
+        fioEl.textContent = value.trim();
+        saveRow(row, user);
+    }
+});
+
 
 // Данные строки для базы
 function rowData(row) {
@@ -632,7 +677,7 @@ document.addEventListener("focusout", e => {
     saveRow(row, user);
 });
 
-// Показ тамерера сколько прошло с сохранения
+// Показ таймера сколько прошло с сохранения
 function saveTime() {
     const saveTime = document.querySelector(".expenses-subtitle");
 
