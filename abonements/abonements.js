@@ -383,9 +383,10 @@ function createItem(card, idItem, item = {}) {
 
 // Нажатие на кнопку создание ученика
 document.addEventListener("click", e => {
-    if (!e.target.classList.contains("add-stu")) return;
+    const btn = e.target.closest(".add-stu");
+    if (!btn) return;
 
-    const card = e.target.closest(".card");
+    const card = btn.closest(".card");
     const idItem = card.querySelectorAll(".table-item").length + 1;
 
     const row = createItem(card, idItem);
