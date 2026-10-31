@@ -163,6 +163,74 @@ function colorDate() {
     });
 }
 
+// Счётчики дат для свернутых групп: зеленый / желтый / красный
+function updateGroupBadges() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    document.querySelectorAll(".main-left .card").forEach(card => {
+        let green = 0, yellow = 0, red = 0;
+
+        card.querySelectorAll(".table-item .date1 input, .table-item .date2 input, .table-item .date3 input").forEach(input => {
+            if (!input.value) return; // даты нет — не учитывается
+
+            const d = new Date(input.value);
+            d.setHours(0, 0, 0, 0);
+
+            if (d.getTime() === today.getTime()) yellow++;
+            else if (d < today) red++;
+            else green++;
+        });
+
+        const badge = card.querySelector(".card-badges");
+        if (!badge) return;
+
+        badge.innerHTML = `
+            <span class="badge green" ${green ? "" : "hidden"}>${green}</span>
+            <span class="badge yellow" ${yellow ? "" : "hidden"}>${yellow}</span>
+            <span class="badge red" ${red ? "" : "hidden"}>${red}</span>
+        `;
+    });
+    updateRowBadges();
+}
+
+// Бейджи дат у свёрнутого абонемента
+function updateRowBadges() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    document.querySelectorAll(".table-item").forEach(row => {
+        let green = 0, yellow = 0, red = 0;
+
+        row.querySelectorAll(".date1 input, .date2 input, .date3 input").forEach(input => {
+            if (!input.value) return; // даты нет — не учитывается
+
+            const d = new Date(input.value);
+            d.setHours(0, 0, 0, 0);
+
+            if (d.getTime() === today.getTime()) yellow++;
+            else if (d < today) red++;
+            else green++;
+        });
+
+        // контейнер добавляем сам, разметку править не нужно
+        let badge = row.querySelector(".row-badges");
+        if (!badge) {
+            badge = document.createElement("div");
+            badge.className = "row-badges";
+            row.querySelector(".fio").after(badge);
+        }
+
+        badge.innerHTML = `
+            <span class="badge green" ${green ? "" : "hidden"}>${green}</span>
+            <span class="badge yellow" ${yellow ? "" : "hidden"}>${yellow}</span>
+            <span class="badge red" ${red ? "" : "hidden"}>${red}</span>
+        `;
+    });
+}
+
+
+
 // Ограничения цифр и подсветка осталось при изменении
 document.addEventListener("input", e => {
     if (e.target.type !== "number") return;
@@ -229,6 +297,16 @@ function calcSum() {
             sum[4] += n(item.querySelector(".number5 input")?.value);
         });
 
+        const sumsInfo = card.querySelector(".card-sums");
+        if (sumsInfo) {
+            const fmt = v => v.toLocaleString("ru-RU") + " ₽";
+            sumsInfo.innerHTML = `
+                <span class="chip paid">Оплачено: ${fmt(sum[1])}</span>
+                <span class="chip rest">Осталось: ${fmt(sum[2])}</span>
+            `;
+        }
+
+
         const tableSum = card.querySelector(".table-sum");
 
         const cells = [
@@ -241,6 +319,9 @@ function calcSum() {
 
         cells.forEach((cell, i) => {
             if (cell) cell.textContent = sum[i] ? sum[i] + " ₽" : "";
+            const abonementsInfo = card.querySelector(".card-abonemets");
+            if (abonementsInfo) abonementsInfo.innerHTML = `Учеников: <b>${items.length}</b>`;
+
         });
     });
 }
@@ -300,6 +381,8 @@ function calcTotal() {
     document.querySelector(".expenses-number5").textContent = total.роялти + " ₽";
     document.querySelector(".expenses-number6").textContent = total.управляющий + " ₽";
     document.querySelector(".expenses-number7").textContent = total.роялтиУправляющий + " ₽";
+
+    updateGroupBadges();
 }
 
 // Создание ученика в карточке
@@ -354,6 +437,7 @@ document.addEventListener("click", e => {
     const row = createItem(card, idItem);
 
     saveRow(row, user)
+    calcSum();
     calcTotal();
 });
 
@@ -367,8 +451,13 @@ function createCard(idCard, idItem) {
 
     card.innerHTML = `
             <div class="card-header">
-                <div class="card-title" data-placeholder="Введите название"></div>
-                <div>
+                <div class="card-left">
+                    <div class="card-title" data-placeholder="Введите название"></div>
+                    <div class="card-abonemets">Учеников</div>
+                    <div class="card-badges"></div>
+                    <div class="card-sums"></div>
+                </div>
+                <div class="card-right">
                     <button class="button add-stu">
                         <img src="/assets/icons/abonements/add.png">
                     </button>
@@ -380,32 +469,30 @@ function createCard(idCard, idItem) {
                     </button>
                 </div>
             </div>
-            <div class="card-scroll">
-                <div class="card-table">
-                    <div class="table-header">
-                        <div>№</div>
-                        <div>ФИО</div>
-                        <div>Активен до</div>
-                        <div>Стоимость</div>
-                        <div>Оплачено</div>
-                        <div>Осталось</div>
-                        <div>Оплата до</div>
-                        <div>Долг</div>
-                        <div>Дата долга</div>
-                        <div>Предоплата</div>
-                        <div></div>
-                    </div>
-                    <div class="table-sum">
-                        <div class="sum">Сумма:</div>
-                        <div class="sum-number1">0 ₽</div>
-                        <div class="sum-number2">0 ₽</div>
-                        <div class="sum-number3">0 ₽</div>
-                        <div></div>
-                        <div class="sum-number4">0 ₽</div>
-                        <div></div>
-                        <div class="sum-number5">0 ₽</div>
-                        <div></div>
-                    </div>
+            <div class="card-table">
+                <div class="table-header">
+                    <div>№</div>
+                    <div>ФИО</div>
+                    <div>Активен до</div>
+                    <div>Стоимость</div>
+                    <div>Оплачено</div>
+                    <div>Осталось</div>
+                    <div>Оплата до</div>
+                    <div>Долг</div>
+                    <div>Дата долга</div>
+                    <div>Предоплата</div>
+                    <div></div>
+                </div>
+                <div class="table-sum">
+                    <div class="sum">Сумма:</div>
+                    <div class="sum-number1">0 ₽</div>
+                    <div class="sum-number2">0 ₽</div>
+                    <div class="sum-number3">0 ₽</div>
+                    <div></div>
+                    <div class="sum-number4">0 ₽</div>
+                    <div></div>
+                    <div class="sum-number5">0 ₽</div>
+                    <div></div>
                 </div>
             </div>
         `;
@@ -510,14 +597,14 @@ document.addEventListener("click", async e => {
     let value = oldTitle;
 
     if (input) {
-    input.focus();
-    const end = input.value.length;
-    input.setSelectionRange(end, end);
-    input.addEventListener("input", () => value = input.value);
-    input.addEventListener("keydown", ev => {
-        if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
-    });
-}
+        input.focus();
+        const end = input.value.length;
+        input.setSelectionRange(end, end);
+        input.addEventListener("input", () => value = input.value);
+        input.addEventListener("keydown", ev => {
+            if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
+        });
+    }
 
 
     if (await promise) {
@@ -546,14 +633,14 @@ document.addEventListener("click", async e => {
     let value = oldFio;
 
     if (input) {
-    input.focus();
-    const end = input.value.length;
-    input.setSelectionRange(end, end);
-    input.addEventListener("input", () => value = input.value);
-    input.addEventListener("keydown", ev => {
-        if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
-    });
-}
+        input.focus();
+        const end = input.value.length;
+        input.setSelectionRange(end, end);
+        input.addEventListener("input", () => value = input.value);
+        input.addEventListener("keydown", ev => {
+            if (ev.key === "Enter") document.getElementById("modal-yes")?.click();
+        });
+    }
 
 
     if (await promise) {
@@ -663,6 +750,7 @@ document.addEventListener('change', e => {
     const row = e.target.closest('.table-item');
     saveRow(row, user);
     colorDate();
+    updateGroupBadges();
 
     const isTouch = window.matchMedia("(hover: none)").matches || "ontouchstart" in window;
     if (!isTouch) {
@@ -745,3 +833,44 @@ async function loadBase() {
 if (user) {
     loadBase();
 }
+
+// Сворачивание групп и абонементов на телефоне
+const isMobile = () => window.matchMedia("(max-width: 480px)").matches;
+
+document.addEventListener("click", e => {
+    if (!isMobile()) return;
+
+    const card = e.target.closest(".main-left .card");
+    if (!card) return;
+
+    const row = e.target.closest(".table-item");
+    if (row) {
+        if (e.target.closest("button")) return;
+
+        card.querySelectorAll(".table-item.open").forEach(r => {
+            if (r !== row) r.classList.remove("open");
+        });
+
+        if (e.target.closest("input")) {
+            row.classList.add("open");
+        } else {
+            row.classList.toggle("open");
+        }
+        return;
+    }
+
+    if (e.target.closest("button, input")) return;
+
+    document.querySelectorAll(".main-left .card").forEach(c => {
+        if (c !== card) {
+            c.classList.remove("open");
+            c.querySelectorAll(".table-item.open").forEach(r => r.classList.remove("open"));
+        }
+    });
+
+    const wasOpen = card.classList.contains("open");
+    card.classList.toggle("open");
+    if (wasOpen) {
+        card.querySelectorAll(".table-item.open").forEach(r => r.classList.remove("open"));
+    }
+});
