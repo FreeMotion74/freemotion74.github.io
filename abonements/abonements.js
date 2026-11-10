@@ -328,8 +328,6 @@ function calcSum() {
 
 // Подсчет правой части
 function calcTotal() {
-    const n = v => parseFloat(v) || 0;
-
     let total = {
         учеников: document.querySelectorAll(".table-item").length,
         стоимость: 0,
@@ -341,27 +339,24 @@ function calcTotal() {
         долг: 0,
 
         налог: 0,
-        аренда: user.Аренда,
-        ремонт: user.Ремонт,
-        арендаРемонт: 0,
-        роялти: 0,
-        управляющий: 0,
-        роялтиУправляющий: 0
+        аренда: +user.Аренда || 0,
+        процент: 0,
+        ремонт: +user.Ремонт || 0,
+        процентРемонт: 0,
     };
 
     document.querySelectorAll(".table-item").forEach(item => {
-        total.стоимость += n(item.querySelector(".number1 input")?.value);
-        total.оплачено += n(item.querySelector(".number2 input")?.value);
-        total.осталось += n(item.querySelector(".number3 input")?.value);
-        total.долг += n(item.querySelector(".number4 input")?.value);
+        total.стоимость += +item.querySelector(".number1 input").value || 0;
+        total.оплачено += +item.querySelector(".number2 input").value || 0;
+        total.осталось += +item.querySelector(".number3 input").value || 0;
+        total.долг += +item.querySelector(".number4 input").value || 0;
     });
 
     total.налог = Math.round(total.оплачено * 0.04);
-    total.арендаРемонт = n(user.Аренда) + n(user.Ремонт);
-    total.роялти = total.учеников * user.Абонемент * 0.05;
-    total.управляющий = total.учеников * user.Абонемент * 0.05;
-    total.роялтиУправляющий = total.роялти + total.управляющий;
-    total.расходы = total.налог + total.арендаРемонт + total.роялтиУправляющий;
+    total.процент = total.учеников * user.Абонемент * 0.10;
+    total.процентРемонт = total.процент + total.ремонт;
+
+    total.расходы = total.налог + total.аренда + total.процент + total.ремонт;
     total.сДолгом = total.стоимость + total.долг - total.расходы;
     total.доход = total.стоимость - total.расходы;
 
@@ -376,11 +371,9 @@ function calcTotal() {
 
     document.querySelector(".expenses-number1").textContent = total.налог + " ₽";
     document.querySelector(".expenses-number2").textContent = total.аренда + " ₽";
-    document.querySelector(".expenses-number3").textContent = total.ремонт + " ₽";
-    document.querySelector(".expenses-number4").textContent = total.арендаРемонт + " ₽";
-    document.querySelector(".expenses-number5").textContent = total.роялти + " ₽";
-    document.querySelector(".expenses-number6").textContent = total.управляющий + " ₽";
-    document.querySelector(".expenses-number7").textContent = total.роялтиУправляющий + " ₽";
+    document.querySelector(".expenses-number3").textContent = total.процент + " ₽";
+    document.querySelector(".expenses-number4").textContent = total.ремонт + " ₽";
+    document.querySelector(".expenses-number5").textContent = total.процентРемонт + " ₽";
 
     updateGroupBadges();
 }
