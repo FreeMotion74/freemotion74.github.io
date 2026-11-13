@@ -65,9 +65,45 @@
     }
 }
 
+#modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
 
+#modal-form input {
+    padding: 10px;
+    border: 1px solid var(--purple-light);
+    border-radius: var(--radius-small);
+    font-size: var(--text18);
+    color: var(--purple-light);
+    text-align: center;
+    background: var(--light);
+}
 
+#modal-form input:focus {
+    outline: 1px solid var(--purple-light);
+}
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.date-today {
+    color: orange;
+    background: #fff6cc;
+}
+
+.date-before {
+    color: green;
+    background: #e6ffe6;
+}
+
+.date-later {
+    color: red;
+    background: #ffe0e0;
+}
 
 /* Мобилка */
 @media (max-width: 480px) {
