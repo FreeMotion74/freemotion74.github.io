@@ -126,6 +126,7 @@ if (today) {
 
 // Высота шапки для отступа sticky-блока
 const header = document.querySelector("header");
+if (!header) return;
 function updateHeaderH() {
     document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
 }
